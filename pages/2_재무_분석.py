@@ -42,20 +42,52 @@ def main():
             return
 
         # Sidebar filters
-        st.sidebar.title("분석 옵션")
+        st.sidebar.title("🔍 회사 검색 및 필터")
         st.sidebar.markdown("---")
 
-        # Company selection
+        # Company search and selection
         available_companies = sorted(metrics_df['corp_name'].unique())
-        selected_companies = st.sidebar.multiselect(
-            "회사 선택",
-            options=available_companies,
-            default=available_companies[:min(10, len(available_companies))]
+
+        # Search mode selector
+        search_mode = st.sidebar.radio(
+            "표시 방식",
+            options=["특정 회사만 보기", "여러 회사 비교"],
+            index=1  # Default to comparison mode for financial analysis
         )
 
-        if not selected_companies:
-            st.warning("최소 1개 이상의 회사를 선택해주세요.")
-            return
+        if search_mode == "특정 회사만 보기":
+            # Single company search
+            selected_company = st.sidebar.selectbox(
+                "회사 검색 (입력하여 검색)",
+                options=available_companies,
+                index=0
+            )
+            selected_companies = [selected_company]
+
+            # Show company info
+            company_info = companies_df[companies_df['corp_name'] == selected_company]
+            if not company_info.empty:
+                st.sidebar.markdown("---")
+                st.sidebar.markdown("**선택된 회사 정보**")
+                st.sidebar.info(f"""
+                **회사명**: {selected_company}
+                **종목코드**: {company_info.iloc[0].get('stock_code', 'N/A')}
+                **분류점수**: {company_info.iloc[0].get('classification_score', 'N/A')}점
+                """)
+        else:
+            # Multiple company selection
+            selected_companies = st.sidebar.multiselect(
+                "비교할 회사 선택 (최대 10개)",
+                options=available_companies,
+                default=available_companies[:min(5, len(available_companies))],
+                max_selections=10
+            )
+
+            if not selected_companies:
+                st.warning("최소 1개 이상의 회사를 선택해주세요.")
+                return
+
+        st.sidebar.markdown("---")
 
         # Year range
         available_years = sorted(metrics_df['year'].unique())

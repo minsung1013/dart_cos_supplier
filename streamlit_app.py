@@ -42,25 +42,49 @@ def main():
             return
 
         # Sidebar filters
-        st.sidebar.title("필터")
+        st.sidebar.title("🔍 회사 검색 및 필터")
         st.sidebar.markdown("---")
 
-        # Year filter
+        # Company search and selection
         if not metrics_df.empty:
+            available_companies = sorted(metrics_df['corp_name'].unique())
+
+            # Search mode selector
+            search_mode = st.sidebar.radio(
+                "표시 방식",
+                options=["특정 회사만 보기", "여러 회사 비교"],
+                index=0
+            )
+
+            if search_mode == "특정 회사만 보기":
+                # Single company search
+                selected_company = st.sidebar.selectbox(
+                    "회사 검색 (입력하여 검색)",
+                    options=["전체"] + available_companies,
+                    index=0
+                )
+
+                if selected_company == "전체":
+                    selected_companies = available_companies[:min(10, len(available_companies))]
+                else:
+                    selected_companies = [selected_company]
+            else:
+                # Multiple company selection
+                selected_companies = st.sidebar.multiselect(
+                    "비교할 회사 선택",
+                    options=available_companies,
+                    default=available_companies[:min(5, len(available_companies))]
+                )
+
+            st.sidebar.markdown("---")
+
+            # Year filter
             available_years = sorted(metrics_df['year'].unique())
             year_range = st.sidebar.slider(
                 "연도 범위",
                 min_value=int(min(available_years)),
                 max_value=int(max(available_years)),
                 value=(int(min(available_years)), int(max(available_years)))
-            )
-
-            # Company filter
-            available_companies = sorted(metrics_df['corp_name'].unique())
-            selected_companies = st.sidebar.multiselect(
-                "회사 선택",
-                options=available_companies,
-                default=available_companies[:min(5, len(available_companies))]
             )
 
             # Filter data

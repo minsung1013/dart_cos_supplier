@@ -105,12 +105,91 @@ def main():
         st.subheader("회사 목록")
 
         # Add search functionality
-        search_query = st.text_input("회사명 검색", "")
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            search_method = st.radio(
+                "검색 방법",
+                options=["직접 입력", "목록에서 선택"],
+                horizontal=True,
+                index=1
+            )
+
+        with col2:
+            if st.button("🔄 전체 보기", use_container_width=True):
+                st.rerun()
+
+        if search_method == "직접 입력":
+            search_query = st.text_input("회사명 검색 (부분 검색 가능)", "", placeholder="예: 코스맥스")
+        else:
+            search_query = st.selectbox(
+                "회사 선택 (입력하여 검색 가능)",
+                options=["전체"] + sorted(companies_df['corp_name'].unique().tolist()),
+                index=0
+            )
+            if search_query == "전체":
+                search_query = ""
 
         if search_query:
             df_display = companies_df[companies_df['corp_name'].str.contains(search_query, case=False, na=False)]
         else:
             df_display = companies_df.copy()
+
+        # Show detailed info if only one company is selected
+        if len(df_display) == 1:
+            st.markdown("---")
+            st.subheader("📋 선택된 회사 상세 정보")
+
+            company_row = df_display.iloc[0]
+
+            col1, col2, col3, col4 = st.columns(4)
+
+            with col1:
+                st.metric("회사명", company_row.get('corp_name', 'N/A'))
+
+            with col2:
+                stock_code = company_row.get('stock_code', '')
+                if pd.notna(stock_code) and stock_code.strip() != '':
+                    st.metric("종목코드", stock_code)
+                else:
+                    st.metric("종목코드", "비상장")
+
+            with col3:
+                st.metric("분류 점수", f"{company_row.get('classification_score', 0)}점")
+
+            with col4:
+                st.metric("회사코드", company_row.get('corp_code', 'N/A'))
+
+            # Get financial data if available
+            if not metrics_df.empty:
+                company_metrics = metrics_df[metrics_df['corp_name'] == company_row.get('corp_name')]
+                if not company_metrics.empty:
+                    st.markdown("#### 최근 재무 현황")
+
+                    latest_year = company_metrics['year'].max()
+                    latest_data = company_metrics[company_metrics['year'] == latest_year].iloc[0]
+
+                    col1, col2, col3 = st.columns(3)
+
+                    with col1:
+                        if '매출액' in latest_data:
+                            revenue = latest_data['매출액'] / 100000000
+                            st.metric(f"{latest_year}년 매출액", f"{revenue:,.0f}억원")
+
+                    with col2:
+                        if '영업이익' in latest_data:
+                            op_profit = latest_data['영업이익'] / 100000000
+                            st.metric(f"{latest_year}년 영업이익", f"{op_profit:,.0f}억원")
+
+                    with col3:
+                        if '영업이익률' in latest_data:
+                            st.metric(f"{latest_year}년 영업이익률", f"{latest_data['영업이익률']:.1f}%")
+
+                    st.info("💡 더 자세한 재무 분석은 '재무 분석' 페이지에서 확인하세요.")
+                else:
+                    st.info("이 회사의 재무 데이터가 아직 수집되지 않았습니다.")
+
+            st.markdown("---")
 
         # Sort options
         sort_col = st.selectbox(
