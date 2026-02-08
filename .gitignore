@@ -1,0 +1,76 @@
+# Environment variables
+.env
+
+# Data files
+data/raw/
+data/cache/
+data/processed/*.csv
+data/processed/*.xlsx
+*.csv
+*.json
+*.xml
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environment
+venv/
+env/
+ENV/
+conda_env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+dart_analysis.log
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/config.toml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
