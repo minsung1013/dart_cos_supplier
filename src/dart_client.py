@@ -128,7 +128,7 @@ class DartClient:
 
         raise requests.RequestException(f"Failed after {retry_count} attempts")
 
-    @cache_response(ttl=config.COMPANY_CACHE_TTL)
+    @cache_response(config.COMPANY_CACHE_TTL)
     def get_corp_codes(self) -> List[Dict]:
         """
         Fetch complete list of company codes from DART.
@@ -159,7 +159,7 @@ class DartClient:
             logger.error(f"Failed to fetch company codes: {e}")
             return []
 
-    @cache_response(ttl=config.FINANCIAL_CACHE_TTL)
+    @cache_response(config.FINANCIAL_CACHE_TTL)
     def get_company_info(self, corp_code: str) -> Optional[Dict]:
         """
         Fetch detailed company information.
@@ -192,7 +192,7 @@ class DartClient:
             logger.error(f"Failed to fetch company info for {corp_code}: {e}")
             return None
 
-    @cache_response(ttl=config.FINANCIAL_CACHE_TTL)
+    @cache_response(config.FINANCIAL_CACHE_TTL)
     def get_financial_statement(self, corp_code: str, year: int, reprt_code: str = None) -> Optional[Dict]:
         """
         Fetch financial statement for a company.
