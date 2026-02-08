@@ -69,10 +69,15 @@ def main():
             if not company_info.empty:
                 st.sidebar.markdown("---")
                 st.sidebar.markdown("**선택된 회사 정보**")
+                stock_code = company_info.iloc[0].get('stock_code', '')
+                if pd.notna(stock_code) and stock_code.strip() != '':
+                    stock_display = stock_code
+                else:
+                    stock_display = '비상장'
                 st.sidebar.info(f"""
                 **회사명**: {selected_company}
-                **종목코드**: {company_info.iloc[0].get('stock_code', 'N/A')}
-                **분류점수**: {company_info.iloc[0].get('classification_score', 'N/A')}점
+                **종목코드**: {stock_display}
+                **회사코드**: {company_info.iloc[0].get('corp_code', 'N/A')}
                 """)
         else:
             # Multiple company selection

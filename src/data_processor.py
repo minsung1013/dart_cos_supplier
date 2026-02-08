@@ -26,7 +26,7 @@ class DataProcessor:
         Returns:
             Tuple of (companies_df, financial_df)
         """
-        companies_file = config.PROCESSED_DATA_DIR / "cosmetic_companies.csv"
+        companies_file = config.PROCESSED_DATA_DIR / "selected_companies.csv"
         financial_file = config.PROCESSED_DATA_DIR / "financial_data.csv"
 
         companies_df = pd.DataFrame()

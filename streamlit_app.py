@@ -27,7 +27,7 @@ def load_dashboard_data():
 # Main app
 def main():
     st.title(f"{config.PAGE_ICON} {config.PAGE_TITLE}")
-    st.markdown("### DART API 기반 화장품 원료 회사 실적 분석 대시보드")
+    st.markdown("### DART API 기반 재무제표 분석 대시보드")
     st.markdown("---")
 
     # Load data
@@ -38,7 +38,7 @@ def main():
         industry_avg_df = data['industry_avg']
 
         if companies_df.empty:
-            st.warning("아직 분류된 회사 데이터가 없습니다. '데이터 관리' 페이지에서 데이터를 수집해주세요.")
+            st.warning("선택된 회사가 없습니다. '데이터 관리' 페이지에서 회사를 검색하고 추가해주세요.")
             return
 
         # Sidebar filters
