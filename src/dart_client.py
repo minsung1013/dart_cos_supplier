@@ -76,7 +76,11 @@ class DartClient:
         """
         self.api_key = api_key
         self.session = requests.Session()
-        self.session.headers.update({'User-Agent': 'DART-Analysis/1.0'})
+        self.session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        })
+        # Keep connection alive
+        self.session.keep_alive = False
 
     def _make_request(self, url: str, params: Optional[Dict] = None, retry_count: int = None) -> requests.Response:
         """
@@ -139,10 +143,18 @@ class DartClient:
         logger.info("Fetching company codes from DART")
 
         try:
-            # Download ZIP file
+            # Download ZIP file with longer timeout and stream
             url = config.ENDPOINTS['corp_code']
             params = {'crtfc_key': self.api_key}
-            response = self._make_request(url, params)
+
+            # Use direct request with stream for large file
+            response = self.session.get(
+                url,
+                params=params,
+                timeout=60,  # Longer timeout for ZIP download
+                stream=True
+            )
+            response.raise_for_status()
 
             # Extract ZIP content
             with zipfile.ZipFile(io.BytesIO(response.content)) as zip_file:

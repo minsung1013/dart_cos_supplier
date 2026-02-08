@@ -83,7 +83,7 @@ FINANCIAL_CACHE_TTL = 604800  # 7 days
 # API rate limiting
 API_RATE_LIMIT = 10  # requests per second
 API_RETRY_COUNT = 3
-API_TIMEOUT = 30  # seconds
+API_TIMEOUT = 60  # seconds (increased for large file downloads)
 RETRY_DELAY = 5  # seconds
 
 # Logging
